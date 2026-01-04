@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Earth's Layers Quiz</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            background-color: #f3f4f6;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        .quiz-container {
+            max-width: 800px;
+            margin: 2rem auto;
+            background: white;
+            padding: 2rem;
+            border-radius: 1rem;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+        }
+        .option-btn {
+            transition: all 0.2s ease;
+            text-align: left;
+            width: 100%;
+            padding: 1rem;
+            margin-bottom: 0.75rem;
+            border: 2px solid #e5e7eb;
+            border-radius: 0.5rem;
+        }
+        .option-btn:hover:not(:disabled) {
+            background-color: #eff6ff;
+            border-color: #3b82f6;
+        }
+        .correct {
+            background-color: #d1fae5 !important;
+            border-color: #10b981 !important;
+            color: #065f46;
+        }
+        .incorrect {
+            background-color: #fee2e2 !important;
+            border-color: #ef4444 !important;
+            color: #991b1b;
+        }
+        .hidden {
+            display: none;
+        }
+    </style>
+</head>
+<body class="p-4">
+
+    <div class="quiz-container">
+        <!-- Start Screen -->
+        <div id="start-screen" class="text-center py-10">
+            <h1 class="text-4xl font-bold text-gray-800 mb-4">Earth's Layers Quiz</h1>
+            <p class="text-gray-600 mb-8">Test your knowledge with 20 questions based on Earth's structure!</p>
+            <button id="start-btn" class="bg-blue-600 text-white px-8 py-3 rounded-full font-semibold hover:bg-blue-700 transition">Start Quiz</button>
+        </div>
+
+        <!-- Quiz Interface -->
+        <div id="quiz-interface" class="hidden">
+            <div class="flex justify-between items-center mb-6">
+                <span id="progress-text" class="text-sm font-medium text-blue-600 uppercase tracking-wider">Question 1 of 20</span>
+                <span id="score-text" class="text-sm font-medium text-gray-500">Score: 0</span>
+            </div>
+            
+            <div id="question-box">
+                <h2 id="question-text" class="text-xl font-semibold text-gray-800 mb-6">Question text goes here?</h2>
+                <div id="options-container" class="flex flex-col">
+                    <!-- Buttons will be injected here -->
+                </div>
+            </div>
+
+            <div id="feedback-box" class="mt-6 p-4 rounded-lg hidden">
+                <p id="feedback-text" class="font-medium"></p>
+                <button id="next-btn" class="mt-4 bg-gray-800 text-white px-6 py-2 rounded hover:bg-black transition">Next Question</button>
+            </div>
+        </div>
+
+        <!-- Result Screen -->
+        <div id="result-screen" class="hidden text-center py-10">
+            <h2 class="text-3xl font-bold text-gray-800 mb-4">Quiz Completed!</h2>
+            <div class="text-6xl font-bold text-blue-600 mb-4" id="final-score">0/0</div>
+            <p id="result-message" class="text-gray-600 mb-8 font-medium"></p>
+            <button id="restart-btn" class="bg-blue-600 text-white px-8 py-3 rounded-full font-semibold hover:bg-blue-700 transition">Restart Quiz</button>
+        </div>
+    </div>
+
+    <script>
+        const questions = [
+            {
+                question: "Which layer is the thin outer layer of our planet?",
+                options: ["Mantle", "Outer Core", "Crust", "Inner Core"],
+                answer: 2,
+                explanation: "The Earth's crust is the outermost layer, ranging from a few km under oceans to thicker under mountains."
+            },
+            {
+                question: "What movement in the crust creates quakes, volcanoes, and mountains?",
+                options: ["Atmospheric shifts", "Moving plates", "Ocean currents", "Lunar gravity"],
+                answer: 1,
+                explanation: "Moving plates in the crust are responsible for creating earthquakes, volcanoes, and mountain ranges."
+            },
+            {
+                question: "How is the mantle described in the presentation?",
+                options: ["A thin solid shell", "A gas-filled chamber", "A hot, flexible layer", "A frozen ice layer"],
+                answer: 2,
+                explanation: "The mantle is a hot, flexible layer between the crust and the core."
+            },
+            {
+                question: "What drives plate movement and fuels volcanoes according to the PPT?",
+                options: ["Surface winds", "The mantle's slow, flowing motion", "Solar radiation", "Rotation of the Moon"],
+                answer: 1,
+                explanation: "The slow, flowing motion of the mantle drives plate movement and fuels geological activity."
+            },
+            {
+                question: "What is the state of the Outer Core?",
+                options: ["Solid", "Gas", "Liquid", "Plasma"],
+                answer: 2,
+                explanation: "The Earth's outer core is a liquid layer of molten iron and nickel."
+            },
+            {
+                question: "The Outer Core extends from 2,890 kilometers down to which depth?",
+                options: ["3,500 km", "4,000 km", "5,150 km", "6,371 km"],
+                answer: 2,
+                explanation: "The Outer Core extends from about 2,890 to 5,150 kilometers below the surface."
+            },
+            {
+                question: "What is the temperature range of the Outer Core?",
+                options: ["100°C to 500°C", "1,000°C to 2,000°C", "4,000°C to 5,700°C", "7,000°C to 10,000°C"],
+                answer: 2,
+                explanation: "The Outer Core's temperatures range from approximately 4,000 to 5,700 degrees Celsius."
+            },
+            {
+                question: "Which process in the Outer Core generates Earth's magnetic field?",
+                options: ["Photosynthesis", "Geodynamo process", "Erosion", "Subduction"],
+                answer: 1,
+                explanation: "The geodynamo process in the outer core generates Earth's magnetic field."
+            },
+            {
+                question: "What is the shape of the Earth's Inner Core?",
+                options: ["A flat disk", "A hollow ring", "A solid sphere", "A liquid cylinder"],
+                answer: 2,
+                explanation: "The Earth's inner core is a solid sphere of iron and nickel."
+            },
+            {
+                question: "What is the radius of the Inner Core?",
+                options: ["500 km", "1,220 km", "2,890 km", "5,150 km"],
+                answer: 1,
+                explanation: "The inner core has a radius of about 1,220 kilometers (758 miles)."
+            },
+            {
+                question: "The Inner Core is roughly how large compared to the Moon?",
+                options: ["The same size", "Half the size", "Three-quarters the size", "Twice the size"],
+                answer: 2,
+                explanation: "It's roughly three-quarters the size of the Moon."
+            },
+            {
+                question: "Why does the Inner Core stay solid despite temperatures over 5,000°C?",
+                options: ["Lack of oxygen", "Immense pressure", "Constant cooling", "High density of rock"],
+                answer: 1,
+                explanation: "Despite the extreme heat, the inner core stays solid due to the immense pressure at the center of the planet."
+            },
+            {
+                question: "What are the primary metals found in both the Inner and Outer Cores?",
+                options: ["Gold and Silver", "Iron and Nickel", "Copper and Zinc", "Aluminum and Tin"],
+                answer: 1,
+                explanation: "Both cores are primarily composed of iron and nickel."
+            },
+            {
+                question: "What layer protects the planet from harmful radiation by generating a magnetic field?",
+                options: ["The Crust", "The Mantle", "The Outer Core", "The Ozone Layer (Slide context: Core)"],
+                answer: 2,
+                explanation: "The Outer Core's geodynamo process generates the magnetic field that protects the planet."
+            },
+            {
+                question: "Where is the crust generally thicker?",
+                options: ["Under oceans", "Under deserts", "Under mountains", "Under islands"],
+                answer: 2,
+                explanation: "The crust ranges from a few km under oceans to being much thicker under mountains."
+            },
+            {
+                question: "What are the two types of rocks mentioned in the Crust slide?",
+                options: ["Sedimentary and Igneous", "Dense oceanic and lighter continental", "Magma and Lava", "Soft and Hard"],
+                answer: 1,
+                explanation: "The crust is made of different rocks, including dense oceanic and lighter continental crust."
+            },
+            {
+                question: "Which layer is located between the crust and the core?",
+                options: ["The Mantle", "The Atmosphere", "The Hydrosphere", "The Biosphere"],
+                answer: 0,
+                explanation: "The mantle is the layer situated between the crust and the core."
+            },
+            {
+                question: "Which studies revealed complex structural features in the inner core?",
+                options: ["Telescopic studies", "Seismic studies", "Satellite imagery", "Deep sea diving"],
+                answer: 1,
+                explanation: "The inner core's complex structural features have been revealed by seismic studies."
+            },
+            {
+                question: "What does the mantle's motion contribute to besides plate movement?",
+                options: ["Tides", "Ocean basin formation", "Atmospheric pressure", "The water cycle"],
+                answer: 1,
+                explanation: "The mantle's motion fuels ocean basin formation, mountain building, and volcanoes."
+            },
+            {
+                question: "Who are the authors of this Earth's Layers presentation?",
+                options: ["John, Paul, and Ringo", "Shashvath, Vaibhav, and Mayank", "Smith, Jones, and Brown", "None of the above"],
+                answer: 1,
+                explanation: "The presentation was created by Shashvath, Vaibhav, and Mayank."
+            }
+        ];
+
+        let currentQuestionIndex = 0;
+        let score = 0;
+
+        const startScreen = document.getElementById('start-screen');
+        const quizInterface = document.getElementById('quiz-interface');
+        const resultScreen = document.getElementById('result-screen');
+        const questionText = document.getElementById('question-text');
+        const optionsContainer = document.getElementById('options-container');
+        const progressText = document.getElementById('progress-text');
+        const scoreText = document.getElementById('score-text');
+        const feedbackBox = document.getElementById('feedback-box');
+        const feedbackText = document.getElementById('feedback-text');
+        const nextBtn = document.getElementById('next-btn');
+        const finalScore = document.getElementById('final-score');
+        const resultMessage = document.getElementById('result-message');
+
+        document.getElementById('start-btn').addEventListener('click', startQuiz);
+        document.getElementById('restart-btn').addEventListener('click', startQuiz);
+        nextBtn.addEventListener('click', showNextQuestion);
+
+        function startQuiz() {
+            currentQuestionIndex = 0;
+            score = 0;
+            startScreen.classList.add('hidden');
+            resultScreen.classList.add('hidden');
+            quizInterface.classList.remove('hidden');
+            updateScoreDisplay();
+            showQuestion();
+        }
+
+        function showQuestion() {
+            const q = questions[currentQuestionIndex];
+            questionText.innerText = q.question;
+            progressText.innerText = `Question ${currentQuestionIndex + 1} of ${questions.length}`;
+            
+            optionsContainer.innerHTML = '';
+            feedbackBox.classList.add('hidden');
+            
+            q.options.forEach((option, index) => {
+                const btn = document.createElement('button');
+                btn.innerText = option;
+                btn.classList.add('option-btn');
+                btn.addEventListener('click', () => handleAnswer(index));
+                optionsContainer.appendChild(btn);
+            });
+        }
+
+        function handleAnswer(selectedIndex) {
+            const q = questions[currentQuestionIndex];
+            const buttons = optionsContainer.querySelectorAll('button');
+            
+            buttons.forEach(btn => btn.disabled = true);
+
+            if (selectedIndex === q.answer) {
+                score++;
+                buttons[selectedIndex].classList.add('correct');
+                feedbackText.innerText = "Correct! " + q.explanation;
+                feedbackBox.className = "mt-6 p-4 rounded-lg bg-green-50 text-green-800 border border-green-200";
+            } else {
+                buttons[selectedIndex].classList.add('incorrect');
+                buttons[q.answer].classList.add('correct');
+                feedbackText.innerText = "Incorrect. " + q.explanation;
+                feedbackBox.className = "mt-6 p-4 rounded-lg bg-red-50 text-red-800 border border-red-200";
+            }
+            
+            feedbackBox.classList.remove('hidden');
+            updateScoreDisplay();
+            
+            if (currentQuestionIndex === questions.length - 1) {
+                nextBtn.innerText = "Show Results";
+            } else {
+                nextBtn.innerText = "Next Question";
+            }
+        }
+
+        function updateScoreDisplay() {
+            scoreText.innerText = `Score: ${score}`;
+        }
+
+        function showNextQuestion() {
+            currentQuestionIndex++;
+            if (currentQuestionIndex < questions.length) {
+                showQuestion();
+            } else {
+                showResults();
+            }
+        }
+
+        function showResults() {
+            quizInterface.classList.add('hidden');
+            resultScreen.classList.remove('hidden');
+            finalScore.innerText = `${score} / ${questions.length}`;
+            
+            const percentage = (score / questions.length) * 100;
+            if (percentage === 100) {
+                resultMessage.innerText = "Perfect score! You are a master of Earth's geology!";
+            } else if (percentage >= 80) {
+                resultMessage.innerText = "Excellent! You have a very strong grasp of the material.";
+            } else if (percentage >= 60) {
+                resultMessage.innerText = "Good job! You passed, but there's room for improvement.";
+            } else {
+                resultMessage.innerText = "Keep studying! Review the Earth's layers and try again.";
+            }
+        }
+    </script>
+</body>
+</html>
